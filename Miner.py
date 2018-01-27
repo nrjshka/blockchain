@@ -15,7 +15,7 @@ def generate_header(index, prev_hash, data, timestamp, nonce):
 def calculate_hash(index, prev_hash, data, timestamp, nonce):
 	header_string = generate_header(index, prev_hash, data, timestamp, nonce)
 	sha = hashlib.sha256()
-	sha.update(header_string)
+	sha.update(header_string.encode('utf-8'))
 	return sha.hexdigest()
 
 def mine(last_block):
@@ -40,9 +40,8 @@ def mine(last_block):
 	return Block(block_data)
 
 if __name__ == '__main__':
-	while True:
-		node_blocks = sync.sync()
-		prev_block = node_blocks[-1]
-		print(prev_block.index)
-		new_block = mine(prev_block)
-		new_block.self_save()		
+	node_blocks = sync.sync()
+	prev_block = node_blocks[-1]
+	print(prev_block.index)
+	new_block = mine(prev_block)
+	new_block.self_save()		
