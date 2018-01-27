@@ -2,11 +2,15 @@ import hashlib
 import os
 import json
 import datetime as date
+from config import *
 
 class Block(object):
 	def __init__(self, dictionary):
-		for k, v in dictionary.items():
-			setattr(self, k, v)
+		for key, value in dictionary.items():
+			if key in BLOCK_VAR_CONVERSIONS:
+				setattr(self, key, BLOCK_VAR_CONVERSIONS[key](value))
+			else:
+				setattr(self, key, value)
 
 		if not hasattr(self, 'nonce'):
 			self.nonce = "None"
@@ -16,6 +20,15 @@ class Block(object):
 
 	def header_string(self):
 		return str(self.index) + self.prev_hash + self.data + str(self.timestamp) + str(self.nonce)
+
+	def generate_header(self, index, prev_hash, data, timestamp, nonce):
+		return str(index) + prev_hash + data + str(timestamp) + str(nonce)
+
+	def update_self_hash(self):
+		sha = hashlib.sha256()
+		sha.update(self.header_string().encode('utf-8'))
+		self.hash = sha.hexdigest()
+		return self.hash
 
 	def create_self_hash(self):
 		sha = hashlib.sha256()
@@ -28,6 +41,25 @@ class Block(object):
 		filename = '%s/%s.json' % (chaindata_dir, index_string) 
 		with open(filename, 'w') as block_file:
 			json.dump(self.__dict__(), block_file)
+
+	def is_valid(self):
+		self.update_self_hash()
+		return str(self.hash[0 : NUM_ZEROS]) == '0' * NUM_ZEROS
+
+	def __repr__(self):
+		return "Block<index: %s>, <hash: %s>" % (self.index, self.hash)
+
+	def __eq__(self, other):
+		return ( self.index == other.index and 
+				 self.timestamp  == other.timestamp  and
+				 self.prev_hash  == other.prev_hash  and
+				 self.hash  == other.hash  and
+				 self.nonce  == other.nonce  and
+				 self.data  == other.data and
+			    )
+
+	def __ne__(self, other):
+		return not self.__eq__(other)
 
 	def __dict__(self):
 		info = {}

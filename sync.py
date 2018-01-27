@@ -1,4 +1,4 @@
-from Block import Block
+from block import Block
 from operator import attrgetter
 import os
 import json

@@ -1,4 +1,4 @@
-from Block import Block
+from block import Block
 from flask import Flask
 import sync
 
