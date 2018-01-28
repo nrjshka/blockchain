@@ -43,4 +43,9 @@ def blockchain():
   return json_blocks
 
 if __name__ == '__main__':
-  node.run()
+  if len(sys.args) >= 2:
+    port = sys.argv[1]
+  else:
+    port = 5000
+
+  node.run(host="127.0.0.1", port=port)
