@@ -55,7 +55,7 @@ class Block(object):
 				 self.prev_hash  == other.prev_hash  and
 				 self.hash  == other.hash  and
 				 self.nonce  == other.nonce  and
-				 self.data  == other.data and
+				 self.data  == other.data
 			    )
 
 	def __ne__(self, other):
